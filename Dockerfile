@@ -22,7 +22,8 @@ RUN apt-get update && \
     libmpfr-dev \
     libgmp3-dev \
     libudunits2-dev libharfbuzz-dev libfribidi-dev \
-    libglpk-dev
+    libglpk-dev \
+    zsh
     
     
     
