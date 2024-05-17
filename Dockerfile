@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM rocker/ml-verse:4.4.0
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ="America/New_York"
 
@@ -6,26 +6,11 @@ ENV TZ="America/New_York"
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
-    libxml2-dev libcurl4-openssl-dev libssl-dev libv8-dev \
-    imagemagick libxml-simple-perl libxml-sax-expat-perl \
-    libconfig-json-perl  libhtml-treebuilder-libxml-perl libhtml-template-perl \
-    libhtml-parser-perl zlib1g-dev libxslt-dev \
-    libcairo2-dev libxt-dev \
     python3 python3-dev python3-pip \
     bedtools \
     wget \
-    git \
-    r-base r-base-dev \
-    libopenblas-dev \
-    libcurl4 libcurl4-openssl-dev \
-    libmagick++-dev \
-    libmpfr-dev \
-    libgmp3-dev \
-    libudunits2-dev libharfbuzz-dev libfribidi-dev \
-    libglpk-dev
-    
-    
-    
+    git    
+
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir \
     tensorflow \
@@ -56,7 +41,6 @@ RUN pip install --upgrade pip && \
     bokeh \
     biotite \
     upsetplot \
-    tobias \
     scanpy \
     pympl \
     imageio \
@@ -70,21 +54,42 @@ RUN pip install --upgrade pip && \
     openai \
     xkcdpass \
     bioframe \
-    pybigtools
+    pybigtools \
+    opencv-python \
+    karyopype \
+    bio-gopher \
+    fuzzywuzzy \
+    ipympl \
+    duckdb \
+    karyopype \
+    seaborn \
+    polars \
+    datashader \
+    holoviews \
+    hvplot \
+    colorcet \
+    lumen \
+    geoviews \
+    param \
+    plotly \
+    pygal \
+    altair
     
 RUN pip install pynndescent==0.5.8 --force-reinstall
-
-RUN apt-get update && apt-get install -y libgdal-dev libnlopt-dev
-
-RUN R -e "options(warn=2); install.packages(c('tidyverse', 'ape', 'phylotools', 'ggsci', 'ggstatsplot', 'gganimate', 'ggthemes', 'ggrepel', 'ggforce', 'cowplot', 'shiny', 'BiocManager', 'tidytree', 'data.table', 'scales', 'DT', 'pheatmap', 'ggwordcloud', 'wordcloud', 'wordcloud2', 'microplot', 'rmeta', 'plotly', 'devtools', 'magick', 'ggstar', 'ggnewscale', 'ggalluvial', 'TDbook', 'aplot', 'patchwork', 'igraph', 'ggraph', 'R.utils', 'ggpubr', 'UpSetR', 'ComplexUpset', 'Cairo', 'ggVennDiagram', 'IRkernel'), repos='http://cran.us.r-project.org')"
-
+    
+RUN R -e "options(warn=2); install.packages(c('tidyverse', 'ape', 'phylotools', 'ggsci', 'ggstatsplot', 'gganimate', 'ggthemes', 'ggrepel', 'ggforce', 'cowplot', 'shiny', 'BiocManager', 'tidytree', 'data.table', 'scales', 'DT', 'pheatmap', 'ggwordcloud', 'wordcloud', 'wordcloud2', 'microplot', 'rmeta', 'plotly', 'devtools', 'ggstar', 'ggnewscale', 'ggalluvial', 'TDbook', 'aplot', 'patchwork', 'igraph', 'ggraph', 'R.utils', 'ggpubr', 'UpSetR', 'ComplexUpset', 'ggVennDiagram', 'IRkernel'))"
 
 RUN R -e "options(warn=2); IRkernel::installspec(user=F)"
 
-RUN R -e "BiocManager::install(c('treeio', 'DESeq2', 'edgeR', 'org.Mm.eg.db', 'org.Hs.eg.db', 'org.Dm.eg.db', 'org.Ce.eg.db', 'BSgenome.Hsapiens.UCSC.hg38', 'BSgenome.Mmusculus.UCSC.mm10', 'DEXSeq', 'phyloseq'))"
+RUN R -e "BiocManager::install(c('treeio', 'DESeq2', 'edgeR', 'org.Mm.eg.db', 'org.Hs.eg.db', 'org.Dm.eg.db', 'org.Ce.eg.db', 'BSgenome.Hsapiens.UCSC.hg38', 'BSgenome.Mmusculus.UCSC.mm10', 'DEXSeq', 'phyloseq', 'dada2'))"
+
 
 RUN R -e 'options(warn=2); devtools::install_github("omarwagih/ggseqlogo")'
-  
+
+RUN R -e "options(warn=2); remotes::install_github('YuLab-SMU/ggtree')"
+RUN R -e "options(warn=2); remotes::install_github('YuLab-SMU/aplot')"
+RUN R -e "options(warn=2); devtools::install_github('ianmoran11/mmtable2')"
+
 RUN mkdir /opt/meme
 ADD http://meme-suite.org/meme-software/5.4.1/meme-5.4.1.tar.gz /opt/meme
 WORKDIR /opt/meme/
@@ -97,6 +102,7 @@ RUN cd /opt/meme/meme-5.4.1 && \
 
 ENV PATH="/opt/libexec/meme-5.4.1:/opt/bin:${PATH}"
 
+RUN apt-get update && apt-get install -y libncurses5-dev
 RUN cd /usr/bin && \
      wget https://github.com/samtools/samtools/releases/download/1.17/samtools-1.17.tar.bz2 && \
      tar -vxjf samtools-1.17.tar.bz2 && \
@@ -114,8 +120,5 @@ RUN pip install bash_kernel && \
 
 
 ENV PATH="/usr/bin/samtools/bin:${PATH}"
-
-# #COPY Kite-Installer.sh .
-# #RUN yes '' | bash  Kite-Installer.sh
-
+RUN R -e 'options(warn=2); install.packages("ggseqlogo")'
 CMD ["/bin/bash"]
