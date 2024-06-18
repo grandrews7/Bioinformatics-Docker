@@ -73,7 +73,8 @@ RUN pip install --upgrade pip && \
     param \
     plotly \
     pygal \
-    altair
+    altair \
+    dask
     
 RUN pip install pynndescent==0.5.8 --force-reinstall
     
@@ -118,7 +119,6 @@ RUN for i in wigToBigWig bedGraphToBigWig liftOver bigBedToBed bigWigToBedGraph;
 RUN pip install bash_kernel && \
     python3 -m bash_kernel.install
 
-
 ENV PATH="/usr/bin/samtools/bin:${PATH}"
-RUN R -e 'options(warn=2); install.packages("ggseqlogo")'
+
 CMD ["/bin/bash"]
